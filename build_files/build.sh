@@ -14,7 +14,12 @@ dnf5 config-manager setopt rpmfusion-free.enabled=1 rpmfusion-free-updates.enabl
 # Enable Ghostty copr
 dnf5 copr enable -y scottames/ghostty
 
-dnf5 install -y discord podman-docker ghostty
+dnf5 install -y \
+    discord \
+    ghostty \
+    headsetcontrol \
+    openrgb \
+    podman-docker
 
 # Disable Ghostty copr
 dnf5 copr disable scottames/ghostty
