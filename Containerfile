@@ -21,6 +21,7 @@ FROM ghcr.io/ublue-os/bazzite-gnome:stable@sha256:23c02860f424869463e363a6e96948
 COPY system_files/ /
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/roothome \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \

@@ -2,9 +2,6 @@
 
 set -ouex pipefail
 
-### Workaround for missing /var/roothome
-mkdir /var/roothome
-
 ### Install packages
 
 # Enable RPM Fusion repositories
