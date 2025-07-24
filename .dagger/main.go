@@ -17,94 +17,254 @@ package main
 import (
 	"context"
 	"dagger/bazzite/internal/dagger"
+	"fmt"
 )
 
-type Bazzite struct{}
-
-func MountCaches(container *dagger.Container) *dagger.Container {
-	return container.
-		WithMountedCache("/var/roothome", dag.CacheVolume("var-roothome")).
-		WithMountedCache("/var/cache", dag.CacheVolume("var-cache")).
-		WithMountedCache("/var/log", dag.CacheVolume("var-log")).
-		WithMountedCache("/var/lib/dnf", dag.CacheVolume("var-lib-dnf"))
+func New() *Bazzite {
+	return &Bazzite{
+		Coprs: []string{},
+		Repos: []string{},
+		Auth: RegistryAuth{
+			Registry: "",
+			Username: "",
+			Password: nil,
+		},
+		Labels:      []ContainerLabel{},
+		Services:    []string{},
+		Tags:        []string{},
+		Directories: []ContainerDirectory{},
+		Caches: []Cache{
+			{
+				Path: "/var/roothome",
+				Name: "var-roothome",
+			},
+			{
+				Path: "/var/cache",
+				Name: "var-cache",
+			},
+			{
+				Path: "/var/log",
+				Name: "var-log",
+			},
+			{
+				Path: "/var/tmp",
+				Name: "var-tmp",
+			},
+			{
+				Path: "/var/lib/dnf",
+				Name: "var-lib-dnf",
+			},
+		},
+	}
 }
 
-func UnmountCaches(container *dagger.Container) *dagger.Container {
-	return container.
-		WithoutMount("/var/roothome").
-		WithoutMount("/var/cache").
-		WithoutMount("/var/log").
-		WithoutMount("/var/lib/dnf")
+type ContainerDirectory struct {
+	HostPath      string
+	ContainerPath string
 }
 
-func EnableServices(container *dagger.Container, services []string) *dagger.Container {
-	return container.
-		WithExec(append([]string{"systemctl", "enable"}, services...))
+type ContainerLabel struct {
+	Key   string
+	Value string
 }
 
-func Commit(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"ostree", "container", "commit"})
+type RegistryAuth struct {
+	Registry string
+	Username string
+	Password *dagger.Secret
 }
 
-func Lint(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"bootc", "container", "lint"})
+type Cache struct {
+	Path string
+	Name string
 }
 
-func EnableCopr(container *dagger.Container, copr string) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "copr", "enable", "-y", copr})
+type Bazzite struct {
+	Source      string
+	Coprs       []string
+	Repos       []string
+	Auth        RegistryAuth
+	Labels      []ContainerLabel
+	Services    []string
+	Tags        []string
+	Caches      []Cache
+	Packages    []string
+	Directories []ContainerDirectory
 }
 
-func DisableCopr(container *dagger.Container, copr string) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "copr", "disable", "-y", copr})
+func (m *Bazzite) From(ctx context.Context, source string) *Bazzite {
+	m.Source = source
+	return m
 }
 
-func EnableRpmFusion(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "config-manager", "setopt", "rpmfusion-free.enabled=1", "rpmfusion-free-updates.enabled=1", "rpmfusion-nonfree.enabled=1", "rpmfusion-nonfree-updates.enabled=1"})
+func (m *Bazzite) WithServices(ctx context.Context, services []string) *Bazzite {
+	m.Services = append(m.Services, services...)
+	return m
 }
 
-func DisableRpmFusion(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "config-manager", "setopt", "rpmfusion-free.enabled=0", "rpmfusion-free-updates.enabled=0", "rpmfusion-nonfree.enabled=0", "rpmfusion-nonfree-updates.enabled=0"})
+// Enables the specified COPR repository in the container.
+func (m *Bazzite) WithCopr(ctx context.Context, copr string) *Bazzite {
+	m.Coprs = append(m.Coprs, copr)
+	return m
 }
 
-func InstallPackages(container *dagger.Container, packages []string) *dagger.Container {
-	return container.
-		WithExec(append([]string{"dnf5", "install", "-y"}, packages...))
+// Enables RPM Fusion repositories in the container.
+func (m *Bazzite) WithRpmfusion(ctx context.Context) *Bazzite {
+	return m.WithReposEnabled(ctx, []string{"rpmfusion-free", "rpmfusion-free-updates", "rpmfusion-nonfree", "rpmfusion-nonfree-updates"})
 }
 
-func EnableTerra(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "config-manager", "setopt", "terra.enabled=1"})
+// Enables Terra repositories in the container.
+func (m *Bazzite) WithTerra(ctx context.Context) *Bazzite {
+	return m.WithReposEnabled(ctx, []string{"terra"})
 }
 
-func DisableTerra(container *dagger.Container) *dagger.Container {
-	return container.
-		WithExec([]string{"dnf5", "config-manager", "setopt", "terra.enabled=0"})
+// Enables the specified repositories in the container.
+func (m *Bazzite) WithReposEnabled(ctx context.Context, repos []string) *Bazzite {
+	m.Repos = append(m.Repos, repos...)
+	return m
 }
 
-// Returns a container that echoes whatever string argument is provided
-func (m *Bazzite) BazziteContainer(
+// Adds the specified tags to the Bazzite container.
+func (m *Bazzite) WithTags(ctx context.Context, tags []string) *Bazzite {
+	m.Tags = append(m.Tags, tags...)
+	return m
+}
+
+func (m *Bazzite) WithPackages(ctx context.Context, packages []string) *Bazzite {
+	m.Packages = append(m.Packages, packages...)
+	return m
+}
+
+// Adds a label to the Bazzite container
+func (m *Bazzite) WithLabel(ctx context.Context, key string, value string) *Bazzite {
+	m.Labels = append(m.Labels, ContainerLabel{Key: key, Value: value})
+	return m
+}
+
+// Adds a directory to the Bazzite container
+func (m *Bazzite) WithDirectory(ctx context.Context, hostPath string, containerPath string) *Bazzite {
+	m.Directories = append(m.Directories, ContainerDirectory{HostPath: hostPath, ContainerPath: containerPath})
+	return m
+}
+
+// Sets the registry authentication for publishing the Bazzite container
+func (m *Bazzite) WithRegistryAuth(ctx context.Context, registry string, username string, password *dagger.Secret) *Bazzite {
+	m.Auth = RegistryAuth{
+		Registry: registry,
+		Username: username,
+		Password: password,
+	}
+	return m
+}
+
+// Publishes the Bazzite container to a registry
+func (m *Bazzite) Publish(
+	ctx context.Context,
+	// +defaultPath="/"
+	source *dagger.Directory,
+	// Registry
+	registry string,
+	// Image
+	image string,
+) ([]string, error) {
+	container := m.Build(ctx, source).
+		WithRegistryAuth(m.Auth.Registry, m.Auth.Username, m.Auth.Password)
+
+	addr := []string{}
+
+	for _, tag := range m.Tags {
+		a, err := container.Publish(ctx, fmt.Sprintf("%s/%s:%s", registry, image, tag))
+		if err != nil {
+			return addr, err
+		}
+		addr = append(addr, a)
+	}
+	return addr, nil
+}
+
+func (m *Bazzite) Build(
 	ctx context.Context,
 	// +defaultPath="/"
 	source *dagger.Directory,
 ) *dagger.Container {
 	container := dag.Container().
-		From("ghcr.io/ublue-os/bazzite-gnome:stable@sha256:23c02860f424869463e363a6e96948918c1036b6e6474b0420186cfb1fd31c68")
-	container = MountCaches(container)
-	container = EnableRpmFusion(container)
-	container = EnableCopr(container, "scottames/ghostty")
-	container = EnableTerra(container)
-	container = InstallPackages(container, []string{"discord", "ghostty", "headsetcontrol", "openrgb", "podman-docker", "liquidctl", "coolercontrol"})
-	container = DisableTerra(container)
-	container = DisableCopr(container, "scottames/ghostty")
-	container = DisableRpmFusion(container)
-    container = EnableServices(container, []string{"podman.socket", "podman-restart.service", "podman-auto-update.timer"})
-	container = Commit(container)
-	container = UnmountCaches(container)
-	return Lint(container)
+		From(m.Source).
+		WithDirectory("/", source.Directory("system_files"))
+
+	// Mount caches
+	for _, cache := range m.Caches {
+		container = container.
+			WithMountedCache(cache.Path, dag.CacheVolume(cache.Name))
+	}
+
+	// Enable repositories
+	for _, repo := range m.Repos {
+		container = container.
+			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=1", repo)})
+	}
+
+	// Enable Copr repositories
+	for _, copr := range m.Coprs {
+		container = container.
+			WithExec([]string{"dnf5", "-y", "copr", "enable", copr})
+	}
+
+	// Install packages
+	container = container.
+		WithExec(append([]string{"dnf5", "-y", "install"}, m.Packages...))
+
+	// Disable repositories
+	for _, repo := range m.Repos {
+		container = container.
+			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=0", repo)})
+	}
+
+	// Disable Copr repositories
+	for _, copr := range m.Coprs {
+		container = container.
+			WithExec([]string{"dnf5", "-y", "copr", "disable", copr})
+	}
+
+	container = container.
+		WithExec(append([]string{"systemctl", "enable"}, m.Services...)).
+		WithExec([]string{"ostree", "container", "commit"})
+
+	// Unmount caches
+	for _, cache := range m.Caches {
+		container = container.
+			WithoutMount(cache.Path)
+	}
+
+	container = container.
+		WithExec([]string{"bootc", "container", "lint"})
+
+	return container
+}
+
+// Creates a Bazzite container
+func (m *Bazzite) BazziteContainer(
+	ctx context.Context,
+	// +defaultPath="/"
+	source *dagger.Directory,
+	// +optional
+	version string,
+	// +optional
+	hash string,
+) *Bazzite {
+
+	if version == "" {
+		version = "stable"
+	}
+
+	if hash != "" {
+		hash = "@sha256:" + hash
+	}
+
+	return m.From(ctx, "ghcr.io/ublue-os/bazzite-gnome:"+version+hash).
+		WithRpmfusion(ctx).
+		WithTerra(ctx).
+		WithDirectory(ctx, "system_files", "/").
+		WithCopr(ctx, "scottames/ghostty").
+		WithPackages(ctx, []string{"discord", "ghostty", "headsetcontrol", "openrgb", "podman-docker", "liquidctl", "coolercontrol"}).
+		WithServices(ctx, []string{"podman.socket", "podman-restart.service", "podman-auto-update.timer"})
 }
