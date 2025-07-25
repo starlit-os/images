@@ -58,105 +58,6 @@ func New() *Bazzite {
 	}
 }
 
-type ContainerDirectory struct {
-	HostPath      string
-	ContainerPath string
-}
-
-type ContainerLabel struct {
-	Key   string
-	Value string
-}
-
-type RegistryAuth struct {
-	Registry string
-	Username string
-	Password *dagger.Secret
-}
-
-type Cache struct {
-	Path string
-	Name string
-}
-
-type Bazzite struct {
-	Source      string
-	Coprs       []string
-	Repos       []string
-	Auth        RegistryAuth
-	Labels      []ContainerLabel
-	Services    []string
-	Tags        []string
-	Caches      []Cache
-	Packages    []string
-	Directories []ContainerDirectory
-}
-
-func (m *Bazzite) From(ctx context.Context, source string) *Bazzite {
-	m.Source = source
-	return m
-}
-
-func (m *Bazzite) WithServices(ctx context.Context, services []string) *Bazzite {
-	m.Services = append(m.Services, services...)
-	return m
-}
-
-// Enables the specified COPR repository in the container.
-func (m *Bazzite) WithCopr(ctx context.Context, copr string) *Bazzite {
-	m.Coprs = append(m.Coprs, copr)
-	return m
-}
-
-// Enables RPM Fusion repositories in the container.
-func (m *Bazzite) WithRpmfusion(ctx context.Context) *Bazzite {
-	return m.WithReposEnabled(ctx, []string{"rpmfusion-free", "rpmfusion-free-updates", "rpmfusion-nonfree", "rpmfusion-nonfree-updates"})
-}
-
-// Enables Terra repositories in the container.
-func (m *Bazzite) WithTerra(ctx context.Context) *Bazzite {
-	return m.WithReposEnabled(ctx, []string{"terra"})
-}
-
-// Enables the specified repositories in the container.
-func (m *Bazzite) WithReposEnabled(ctx context.Context, repos []string) *Bazzite {
-	m.Repos = append(m.Repos, repos...)
-	return m
-}
-
-// Adds the specified tags to the Bazzite container.
-func (m *Bazzite) WithTags(ctx context.Context, tags []string) *Bazzite {
-	m.Tags = append(m.Tags, tags...)
-	return m
-}
-
-func (m *Bazzite) WithPackages(ctx context.Context, packages []string) *Bazzite {
-	m.Packages = append(m.Packages, packages...)
-	return m
-}
-
-// Adds a label to the Bazzite container
-func (m *Bazzite) WithLabel(ctx context.Context, key string, value string) *Bazzite {
-	m.Labels = append(m.Labels, ContainerLabel{Key: key, Value: value})
-	return m
-}
-
-// Adds a directory to the Bazzite container
-func (m *Bazzite) WithDirectory(ctx context.Context, hostPath string, containerPath string) *Bazzite {
-	m.Directories = append(m.Directories, ContainerDirectory{HostPath: hostPath, ContainerPath: containerPath})
-	return m
-}
-
-// Sets the registry authentication for publishing the Bazzite container
-func (m *Bazzite) WithRegistryAuth(ctx context.Context, registry string, username string, password *dagger.Secret) *Bazzite {
-	m.Auth = RegistryAuth{
-		Registry: registry,
-		Username: username,
-		Password: password,
-	}
-	return m
-}
-
 // Publishes the Bazzite container to a registry
 func (m *Bazzite) Publish(
 	ctx context.Context,
@@ -166,7 +67,7 @@ func (m *Bazzite) Publish(
 	registry string,
 	// Image
 	image string,
-) ([]string, error) {
+) (string, error) {
 	container := m.Build(ctx, source).
 		WithRegistryAuth(m.Auth.Registry, m.Auth.Username, m.Auth.Password)
 
@@ -175,11 +76,12 @@ func (m *Bazzite) Publish(
 	for _, tag := range m.Tags {
 		a, err := container.Publish(ctx, fmt.Sprintf("%s/%s:%s", registry, image, tag))
 		if err != nil {
-			return addr, err
+			return "", err
 		}
 		addr = append(addr, a)
 	}
-	return addr, nil
+
+	return m.sign(addr)
 }
 
 func (m *Bazzite) Build(
@@ -246,21 +148,9 @@ func (m *Bazzite) BazziteContainer(
 	ctx context.Context,
 	// +defaultPath="/"
 	source *dagger.Directory,
-	// +optional
-	version string,
-	// +optional
-	hash string,
+	source_image string,
 ) *Bazzite {
-
-	if version == "" {
-		version = "stable"
-	}
-
-	if hash != "" {
-		hash = "@sha256:" + hash
-	}
-
-	return m.From(ctx, "ghcr.io/ublue-os/bazzite-gnome:"+version+hash).
+	return m.From(ctx, source_image).
 		WithRpmfusion(ctx).
 		WithTerra(ctx).
 		WithDirectory(ctx, "system_files", "/").
