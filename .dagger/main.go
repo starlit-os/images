@@ -67,7 +67,7 @@ func (m *Bazzite) Publish(
 	registry string,
 	// Image
 	image string,
-) (string, error) {
+) ([]string, error) {
 	container := m.Build(ctx, source).
 		WithRegistryAuth(m.Auth.Registry, m.Auth.Username, m.Auth.Password)
 
@@ -76,12 +76,12 @@ func (m *Bazzite) Publish(
 	for _, tag := range m.Tags {
 		a, err := container.Publish(ctx, fmt.Sprintf("%s/%s:%s", registry, image, tag))
 		if err != nil {
-			return "", err
+			return addr, err
 		}
 		addr = append(addr, a)
 	}
 
-	return m.sign(addr)
+	return addr, nil
 }
 
 func (m *Bazzite) Build(
