@@ -155,6 +155,20 @@ func (m *Bazzite) BazziteContainer(
 		WithTerra(ctx).
 		WithDirectory(ctx, "system_files", "/").
 		WithCopr(ctx, "scottames/ghostty").
-		WithPackages(ctx, []string{"discord", "ghostty", "headsetcontrol", "openrgb", "podman-docker", "liquidctl", "coolercontrol"}).
-		WithServices(ctx, []string{"podman.socket", "podman-restart.service", "podman-auto-update.timer"})
+		WithCopr(ctx, "che/nerd-fonts").
+		WithPackages(ctx, []string{
+			"coolercontrol",
+			"discord",
+			"ghostty",
+			"headsetcontrol",
+			"liquidctl",
+			"nerd-fonts",
+			"openrgb",
+			"podman-docker",
+		}).
+		WithServices(ctx, []string{
+			"podman.socket",
+			"podman-restart.service",
+			"podman-auto-update.timer",
+		})
 }
