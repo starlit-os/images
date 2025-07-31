@@ -26,6 +26,12 @@ type Cache struct {
 	Name string
 }
 
+type OptFix struct {
+	Directory    string
+	Binary       string
+	BinaryTarget string
+}
+
 type Bazzite struct {
 	Source      string
 	Coprs       []string
@@ -37,6 +43,7 @@ type Bazzite struct {
 	Caches      []Cache
 	Packages    []string
 	Directories []ContainerDirectory
+	OptFixes    []OptFix
 }
 
 func (m *Bazzite) From(ctx context.Context, source string) *Bazzite {
@@ -101,5 +108,14 @@ func (m *Bazzite) WithRegistryAuth(ctx context.Context, registry string, usernam
 		Username: username,
 		Password: password,
 	}
+	return m
+}
+
+func (m *Bazzite) WithOptFix(ctx context.Context, directory string, binary string, binary_target string) *Bazzite {
+	m.OptFixes = append(m.OptFixes, OptFix{
+		Directory:    directory,
+		Binary:       binary,
+		BinaryTarget: binary_target,
+	})
 	return m
 }
