@@ -104,6 +104,10 @@ func (m *Bazzite) Build(
 			WithMountedCache(cache.Path, dag.CacheVolume(cache.Name))
 	}
 
+	container = container.
+		WithExec([]string{"mkdir", "-p", "/var/opt"}).
+		WithExec([]string{"ln", "-s", "/var/opt", "/opt"})
+
 	// Enable repositories
 	for _, repo := range m.Repos {
 		container = container.
@@ -132,6 +136,13 @@ func (m *Bazzite) Build(
 			WithExec([]string{"dnf5", "-y", "copr", "disable", copr})
 	}
 
+	for _, opt := range m.OptFixes {
+		container = container.
+			WithExec([]string{"mv", "/var/opt/" + opt.Directory, "/lib/" + opt.Directory}).
+			WithExec([]string{"rm", "/usr/bin/" + opt.Binary}).
+			WithExec([]string{"ln", "-s", "/opt/" + opt.Directory + "/" + opt.BinaryTarget, "/usr/bin/" + opt.Binary})
+	}
+
 	container = container.
 		WithExec(append([]string{"systemctl", "enable"}, m.Services...)).
 		WithExec([]string{"ostree", "container", "commit"})
@@ -158,6 +169,7 @@ func (m *Bazzite) BazziteContainer(
 	return m.From(ctx, source_image).
 		WithRpmfusion(ctx).
 		WithTerra(ctx).
+		WithReposEnabled(ctx, []string{"warpdotdev"}).
 		WithDirectory(ctx, "system_files", "/").
 		WithCopr(ctx, "scottames/ghostty").
 		WithCopr(ctx, "che/nerd-fonts").
@@ -170,7 +182,9 @@ func (m *Bazzite) BazziteContainer(
 			"nerd-fonts",
 			"openrgb",
 			"podman-docker",
+			"warp-terminal",
 		}).
+		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
 		WithServices(ctx, []string{
 			"podman.socket",
 			"podman-restart.service",
