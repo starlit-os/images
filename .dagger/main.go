@@ -91,12 +91,7 @@ func (m *Bazzite) Build(
 ) *dagger.Container {
 	container := dag.Container().
 		From(m.Source).
-		WithDirectory("/", source.Directory("system_files")).
-		WithExec([]string{
-			"echo",
-			"'import? \"/usr/share/ublue-os/just/70-lily.just\"'",
-			">>",
-			"/usr/share/ublue-os/justfile"})
+		WithDirectory("/", source.Directory("system_files"))
 
 	// Mount caches
 	for _, cache := range m.Caches {
@@ -154,6 +149,11 @@ func (m *Bazzite) Build(
 	}
 
 	container = container.
+		WithExec([]string{
+			"echo",
+			"'import? \"/usr/share/ublue-os/just/99-lily.just\"'",
+			">>",
+			"/usr/share/ublue-os/justfile"}).
 		WithExec([]string{"bootc", "container", "lint"})
 
 	return container
