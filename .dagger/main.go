@@ -150,10 +150,10 @@ func (m *Bazzite) Build(
 
 	container = container.
 		WithExec([]string{
-			"echo",
-			"'import? \"/usr/share/ublue-os/just/99-lily.just\"'",
-			">>",
-			"/usr/share/ublue-os/justfile"}).
+			"sh",
+			"-c",
+			"echo 'import? \"/usr/share/ublue-os/just/99-lily.just\"' | tee -a /usr/share/ublue-os/justfile",
+		}).
 		WithExec([]string{"bootc", "container", "lint"})
 
 	return container
