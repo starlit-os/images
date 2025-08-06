@@ -183,6 +183,8 @@ func (m *Bazzite) BazziteContainer(
 			"openrgb",
 			"podman-docker",
 			"warp-terminal",
+			"@cosmic-desktop",
+			"@cosmic-desktop-apps",
 		}).
 		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
 		WithServices(ctx, []string{
