@@ -12,6 +12,11 @@
       "matchUpdateTypes": ["pin", "pinDigest"]
     },
     {
+      "automerge": true,
+      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
+      "matchDepNames": ["ghcr.io/ublue-os/bazzite-gnome"],
+    }
+    {
       "enabled": false,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
