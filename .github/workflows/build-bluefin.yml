@@ -22,7 +22,7 @@ env:
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
   SOURCE_IMAGE: "ghcr.io/ublue-os/bluefin:stable"
-  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/${{ env.IMAGE_NAME }}/refs/heads/main/cosign.pub"
+  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/cosign.pub"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
