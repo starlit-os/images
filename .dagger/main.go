@@ -200,10 +200,15 @@ func (m *Bazzite) BluefinContainer(
 	source_image string,
 ) *Bazzite {
 	return m.From(ctx, source_image).
+		WithRpmfusion(ctx).
+		WithTerra(ctx).
 		WithReposEnabled(ctx, []string{"warpdotdev"}).
 		WithDirectory(ctx, "system_files", "/").
 		WithPackages(ctx, []string{
+			"coolercontrol",
 			"headsetcontrol",
+			"liquidctl",
+			"openrgb",
 			"podman-docker",
 			"warp-terminal",
 		}).
