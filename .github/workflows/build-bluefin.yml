@@ -15,14 +15,14 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "Bazzite (Starlit Edition)"
+  IMAGE_DESC: "Bluefin (Starlit Edition)"
   IMAGE_KEYWORDS: "bootc,ublue,universal-blue,bluefin"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4" # Put your own image here for a fancy profile on https://artifacthub.io/!
   IMAGE_NAME: "bluefin"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
   SOURCE_IMAGE: "ghcr.io/ublue-os/bluefin:stable"
-  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/bazzite/refs/heads/main/cosign.pub"
+  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/${{ env.IMAGE_NAME }}/refs/heads/main/cosign.pub"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
@@ -106,7 +106,7 @@ jobs:
 
       - name: Build Image
         run: |
-          bazzite-container ${{ env.SOURCE_IMAGE }} |
+          ${{ env.IMAGE_NAME }}-container ${{ env.SOURCE_IMAGE }} |
           build
         shell: dagger {0}
         env:
@@ -123,7 +123,7 @@ jobs:
       - name: Push Image
         if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
-          bluefin-container ${{ env.SOURCE_IMAGE }} |
+          ${{ env.IMAGE_NAME }}-container ${{ env.SOURCE_IMAGE }} |
           with-label io.artifacthub.package.readme-url https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/refs/heads/main/README.md |
           with-label io.artifacthub.package.homepage-url https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }} |
           with-label io.artifacthub.package.documentation-url https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/main/README.md |
