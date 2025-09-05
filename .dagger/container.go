@@ -64,12 +64,12 @@ func (m *Bazzite) WithCopr(ctx context.Context, copr string) *Bazzite {
 
 // Enables RPM Fusion repositories in the container.
 func (m *Bazzite) WithRpmfusion(ctx context.Context) *Bazzite {
-	return m.WithReposEnabled(ctx, []string{"rpmfusion-free", "rpmfusion-free-updates", "rpmfusion-nonfree", "rpmfusion-nonfree-updates"})
+	return m.WithReposEnabled(ctx, []string{"rpmfusion*"})
 }
 
 // Enables Terra repositories in the container.
 func (m *Bazzite) WithTerra(ctx context.Context) *Bazzite {
-	return m.WithReposEnabled(ctx, []string{"terra"})
+	return m.WithReposEnabled(ctx, []string{"terra*"})
 }
 
 // Enables the specified repositories in the container.
