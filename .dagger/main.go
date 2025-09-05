@@ -191,3 +191,26 @@ func (m *Bazzite) BazziteContainer(
 			"podman-auto-update.timer",
 		})
 }
+
+// Creates a Bluefin container
+func (m *Bazzite) BluefinContainer(
+	ctx context.Context,
+	// +defaultPath="/"
+	source *dagger.Directory,
+	source_image string,
+) *Bazzite {
+	return m.From(ctx, source_image).
+		WithReposEnabled(ctx, []string{"warpdotdev"}).
+		WithDirectory(ctx, "system_files", "/").
+		WithPackages(ctx, []string{
+			"headsetcontrol",
+			"podman-docker",
+			"warp-terminal",
+		}).
+		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
+		WithServices(ctx, []string{
+			"podman.socket",
+			"podman-restart.service",
+			"podman-auto-update.timer",
+		})
+}
