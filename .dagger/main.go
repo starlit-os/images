@@ -22,6 +22,7 @@ import (
 
 func New() *Bazzite {
 	return &Bazzite{
+		Dnf:   "dnf5",
 		Coprs: []string{},
 		Repos: []string{},
 		Auth: RegistryAuth{
@@ -90,8 +91,15 @@ func (m *Bazzite) Build(
 	source *dagger.Directory,
 ) *dagger.Container {
 	container := dag.Container().
-		From(m.Source).
-		WithDirectory("/", source.Directory("system_files"))
+		From(m.Source)
+
+
+	// Copy directories
+	for _, dir := range m.Directories {
+		container = container.
+			WithDirectory(dir.ContainerPath, source.Directory(dir.HostPath))
+	}
+
 
 	// Mount caches
 	for _, cache := range m.Caches {
@@ -106,29 +114,29 @@ func (m *Bazzite) Build(
 	// Enable repositories
 	for _, repo := range m.Repos {
 		container = container.
-			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=1", repo)})
+			WithExec([]string{m.Dnf, "config-manager", "setopt", fmt.Sprintf("%s.enabled=1", repo)})
 	}
 
 	// Enable Copr repositories
 	for _, copr := range m.Coprs {
 		container = container.
-			WithExec([]string{"dnf5", "-y", "copr", "enable", copr})
+			WithExec([]string{m.Dnf, "-y", "copr", "enable", copr})
 	}
 
 	// Install packages
 	container = container.
-		WithExec(append([]string{"dnf5", "-y", "install"}, m.Packages...))
+		WithExec(append([]string{m.Dnf, "-y", "install"}, m.Packages...))
 
 	// Disable repositories
 	for _, repo := range m.Repos {
 		container = container.
-			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=0", repo)})
+			WithExec([]string{m.Dnf, "config-manager", "setopt", fmt.Sprintf("%s.enabled=0", repo)})
 	}
 
 	// Disable Copr repositories
 	for _, copr := range m.Coprs {
 		container = container.
-			WithExec([]string{"dnf5", "-y", "copr", "disable", copr})
+			WithExec([]string{m.Dnf, "-y", "copr", "disable", copr})
 	}
 
 	for _, opt := range m.OptFixes {
@@ -157,65 +165,4 @@ func (m *Bazzite) Build(
 		WithExec([]string{"bootc", "container", "lint"})
 
 	return container
-}
-
-// Creates a Bazzite container
-func (m *Bazzite) BazziteContainer(
-	ctx context.Context,
-	// +defaultPath="/"
-	source *dagger.Directory,
-	source_image string,
-) *Bazzite {
-	return m.From(ctx, source_image).
-		WithRpmfusion(ctx).
-		WithTerra(ctx).
-		WithReposEnabled(ctx, []string{"warpdotdev"}).
-		WithDirectory(ctx, "system_files", "/").
-		WithCopr(ctx, "scottames/ghostty").
-		WithCopr(ctx, "che/nerd-fonts").
-		WithPackages(ctx, []string{
-			"coolercontrol",
-			"discord",
-			"ghostty",
-			"headsetcontrol",
-			"liquidctl",
-			"nerd-fonts",
-			"openrgb",
-			"podman-docker",
-			"warp-terminal",
-		}).
-		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
-		WithServices(ctx, []string{
-			"podman.socket",
-			"podman-restart.service",
-			"podman-auto-update.timer",
-		})
-}
-
-// Creates a Bluefin container
-func (m *Bazzite) BluefinContainer(
-	ctx context.Context,
-	// +defaultPath="/"
-	source *dagger.Directory,
-	source_image string,
-) *Bazzite {
-	return m.From(ctx, source_image).
-		WithRpmfusion(ctx).
-		WithTerra(ctx).
-		WithReposEnabled(ctx, []string{"warpdotdev"}).
-		WithDirectory(ctx, "system_files", "/").
-		WithPackages(ctx, []string{
-			"coolercontrol",
-			"headsetcontrol",
-			"liquidctl",
-			"openrgb",
-			"podman-docker",
-			"warp-terminal",
-		}).
-		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
-		WithServices(ctx, []string{
-			"podman.socket",
-			"podman-restart.service",
-			"podman-auto-update.timer",
-		})
 }
