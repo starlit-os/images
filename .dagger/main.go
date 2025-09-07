@@ -90,13 +90,13 @@ func (m *Bazzite) Build(
 	source *dagger.Directory,
 ) *dagger.Container {
 	container := dag.Container().
-		From(m.Source).
+		From(m.Source)
 
 
 	// Copy directories
 	for _, dir := range m.Directories {
 		container = container.
-			WithDirectory(dir.ContainerPath, dir.HostPath)
+			WithDirectory(dir.ContainerPath, source.Direcory(dir.HostPath))
 	}
 
 
