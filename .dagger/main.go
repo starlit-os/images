@@ -96,7 +96,7 @@ func (m *Bazzite) Build(
 	// Copy directories
 	for _, dir := range m.Directories {
 		container = container.
-			WithDirectory(dir.ContainerPath, source.Direcory(dir.HostPath))
+			WithDirectory(dir.ContainerPath, source.Directory(dir.HostPath))
 	}
 
 
