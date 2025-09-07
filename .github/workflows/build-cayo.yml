@@ -94,8 +94,6 @@ jobs:
       - name: Setup Docker Cache
         id: docker_cache
         uses: useblacksmith/setup-docker-builder@0b434dfbb431f4e3a2bcee7a773a56bd363184c5 # v1
-        with:
-          setup-only: true
 
       - name: Setup Dagger
         id: setup_dagger
