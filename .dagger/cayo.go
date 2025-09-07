@@ -19,7 +19,6 @@ func (m *Bazzite) CayoContainer(
 		WithPackages(ctx, []string{
 			"podman-docker",
 			"ublue-os-luks",
-			"ublue-os-just",
 		}).
 		WithServices(ctx, []string{
 			"podman.socket",
