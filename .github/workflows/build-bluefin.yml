@@ -12,6 +12,9 @@ on:
     paths-ignore:
       - "**/README.md"
       - "build-bazzite.yml"
+      - "bazzite.go"
+      - "build-cayo.yml"
+      - "cayo.go"
   workflow_dispatch:
 
 env:

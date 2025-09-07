@@ -12,6 +12,9 @@ on:
     paths-ignore:
       - "**/README.md"
       - "build-bazzite.yml"
+      - "bazzite.go"
+      - "build-bluefin.yml"
+      - "bluefin.go"
   workflow_dispatch:
 
 env:
