@@ -22,7 +22,7 @@ import (
 
 func New() *Bazzite {
 	return &Bazzite{
-		Dnf:   "dnf5"
+		Dnf:   "dnf5",
 		Coprs: []string{},
 		Repos: []string{},
 		Auth: RegistryAuth{
