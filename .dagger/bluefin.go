@@ -20,8 +20,10 @@ func (m *Bazzite) BluefinContainer(
 		WithDirectory(ctx, "system_files/desktop", "/").
 		WithPackages(ctx, []string{
 			"coolercontrol",
+			"discord",
 			"headsetcontrol",
 			"liquidctl",
+			"lutris",
 			"openrgb",
 			"podman-docker",
 			"warp-terminal",
