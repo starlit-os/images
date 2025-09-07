@@ -44,6 +44,12 @@ type Bazzite struct {
 	Packages    []string
 	Directories []ContainerDirectory
 	OptFixes    []OptFix
+	Dnf			[]string
+}
+
+func (m *Bazzite) WithDnf(ctx context.Context, dnf string) *Bazzite {
+	m.Dnf = dnf
+	return m
 }
 
 func (m *Bazzite) From(ctx context.Context, source string) *Bazzite {

@@ -22,6 +22,7 @@ import (
 
 func New() *Bazzite {
 	return &Bazzite{
+		Dnf:   "dnf5"
 		Coprs: []string{},
 		Repos: []string{},
 		Auth: RegistryAuth{
@@ -113,29 +114,29 @@ func (m *Bazzite) Build(
 	// Enable repositories
 	for _, repo := range m.Repos {
 		container = container.
-			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=1", repo)})
+			WithExec([]string{m.Dnf, "config-manager", "setopt", fmt.Sprintf("%s.enabled=1", repo)})
 	}
 
 	// Enable Copr repositories
 	for _, copr := range m.Coprs {
 		container = container.
-			WithExec([]string{"dnf5", "-y", "copr", "enable", copr})
+			WithExec([]string{m.Dnf, "-y", "copr", "enable", copr})
 	}
 
 	// Install packages
 	container = container.
-		WithExec(append([]string{"dnf5", "-y", "install"}, m.Packages...))
+		WithExec(append([]string{m.Dnf, "-y", "install"}, m.Packages...))
 
 	// Disable repositories
 	for _, repo := range m.Repos {
 		container = container.
-			WithExec([]string{"dnf5", "config-manager", "setopt", fmt.Sprintf("%s.enabled=0", repo)})
+			WithExec([]string{m.Dnf, "config-manager", "setopt", fmt.Sprintf("%s.enabled=0", repo)})
 	}
 
 	// Disable Copr repositories
 	for _, copr := range m.Coprs {
 		container = container.
-			WithExec([]string{"dnf5", "-y", "copr", "disable", copr})
+			WithExec([]string{m.Dnf, "-y", "copr", "disable", copr})
 	}
 
 	for _, opt := range m.OptFixes {

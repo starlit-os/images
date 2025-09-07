@@ -13,6 +13,7 @@ func (m *Bazzite) CayoContainer(
 	source_image string,
 ) *Bazzite {
 	return m.From(ctx, source_image).
+		WithDnf(ctx, "dnf").
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithPackages(ctx, []string{
 			"podman-docker",
