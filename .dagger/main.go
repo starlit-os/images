@@ -91,7 +91,14 @@ func (m *Bazzite) Build(
 ) *dagger.Container {
 	container := dag.Container().
 		From(m.Source).
-		WithDirectory("/", source.Directory("system_files"))
+
+
+	// Copy directories
+	for _, dir := range m.Directories {
+		container = container.
+			WithDirectory(dir.ContainerPath, dir.HostPath)
+	}
+
 
 	// Mount caches
 	for _, cache := range m.Caches {
