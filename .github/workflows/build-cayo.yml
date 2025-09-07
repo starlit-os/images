@@ -24,7 +24,7 @@ env:
   IMAGE_NAME: "cayo"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
-  SOURCE_IMAGE: "ghcr.io/ublue-os/cayo:centos10"
+  SOURCE_IMAGE: "ghcr.io/ublue-os/cayo:fedora42"
   SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/cayo/refs/heads/main/cosign.pub"
 
 concurrency:
