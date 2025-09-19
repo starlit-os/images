@@ -25,6 +25,7 @@ func (m *Bazzite) BluefinContainer(
 			"liquidctl",
 			"lutris",
 			"openrgb",
+			"podman-compose",
 			"podman-docker",
 			"warp-terminal",
 		}).
