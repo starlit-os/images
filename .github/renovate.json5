@@ -17,6 +17,11 @@
       "matchDepNames": ["ghcr.io/ublue-os/bazzite-gnome", "ghcr.io/ublue-os/bluefin"],
     },
     {
+      "automerge": true,
+      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
+      "matchDepNames": ["ghcr.io/ublue-os/bluefin"],
+    },
+    {
       "enabled": false,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
