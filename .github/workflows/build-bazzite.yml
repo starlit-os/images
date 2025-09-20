@@ -24,7 +24,7 @@ env:
   IMAGE_NAME: "bazzite"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
-  SOURCE_IMAGE: "ghcr.io/ublue-os/bazzite-gnome:stable@sha256:23c02860f424869463e363a6e96948918c1036b6e6474b0420186cfb1fd31c68"
+  SOURCE_IMAGE: "ghcr.io/ublue-os/bazzite-gnome:stable"
   SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/bazzite/refs/heads/main/cosign.pub"
 
 concurrency:
