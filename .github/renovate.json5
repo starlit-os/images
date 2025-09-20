@@ -17,12 +17,7 @@
       "matchDepNames": ["ghcr.io/ublue-os/bazzite-gnome", "ghcr.io/ublue-os/bluefin"],
     },
     {
-      "automerge": true,
-      "matchUpdateTypes": ["digest", "pinDigest", "pin"],
-      "matchDepNames": ["ghcr.io/ublue-os/bluefin"],
-    },
-    {
-      "enabled": false,
+      "enabled": true,
       "matchUpdateTypes": ["digest", "pinDigest", "pin"],
       "matchDepTypes": ["container"],
       "matchFileNames": [".github/workflows/**.yaml", ".github/workflows/**.yml"],
