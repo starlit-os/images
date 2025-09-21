@@ -25,8 +25,6 @@ func (m *Bazzite) BluefinContainer(
 			"liquidctl",
 			"lutris",
 			"openrgb",
-			"podman-compose",
-			"podman-docker",
 			"warp-terminal",
 		}).
 		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
