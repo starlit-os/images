@@ -53,6 +53,11 @@ func (m *Bazzite) WithDnf(ctx context.Context, dnf string) *Bazzite {
 	return m
 }
 
+func (m *Bazzite) WithJust(ctx context.Context, just bool) *Bazzite {
+	m.ust = just
+	return m
+}
+
 func (m *Bazzite) From(ctx context.Context, source string) *Bazzite {
 	m.Source = source
 	return m

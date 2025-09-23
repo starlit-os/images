@@ -12,5 +12,6 @@ func (m *Bazzite) FedoraContainer(
 	source *dagger.Directory,
 	source_image string,
 ) *Bazzite {
-	return m.From(ctx, source_image)
+	return m.From(ctx, source_image).
+		WithJust(ctx, false)
 }
