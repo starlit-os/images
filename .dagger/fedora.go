@@ -17,16 +17,9 @@ func (m *Bazzite) FedoraContainer(
 		WithPackages(ctx, []string{
 			"fwupd",
 			"gdm",
-			"gnome-bluetooth",
-			"gnome-color-manager",
-			"gnome-control-center",
-			"gnome-disk-utility",
-			"gnome-session-wayland-session"
-			"gnome-settings-daemon",
-			"gnome-shell",
+			"gnome-{bluetooth,color-manager,control-center,disk-utility,session-wayland-session,settings-daemon,shell}",
 			"nautilus",
-			"plymouth",
-			"plymouth-system-theme",
+			"plymouth{,-system-theme}",
 			"systemd-{resolved,container,oomd}",
 			"tuned-ppd",
 			"wireguard-tools",
