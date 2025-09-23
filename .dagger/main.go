@@ -56,6 +56,7 @@ func New() *Bazzite {
 				Name: "var-lib-dnf",
 			},
 		},
+		Just: true, // Default value
 	}
 }
 
@@ -163,12 +164,17 @@ func (m *Bazzite) Build(
 	}
 
 	container = container.
-		WithExec([]string{
-			"sh",
-			"-c",
-			"echo 'import? \"/usr/share/ublue-os/just/99-lily.just\"' | tee -a /usr/share/ublue-os/justfile",
-		}).
 		WithExec([]string{"bootc", "container", "lint"})
+
+	// Only run the 99-lily.just manipulation if Just is true
+	if m.Just {
+		container = container.
+			WithExec([]string{
+				"sh",
+				"-c",
+				"echo 'import? \"/usr/share/ublue-os/just/99-lily.just\"' | tee -a /usr/share/ublue-os/justfile",
+			})
+	}
 
 	return container
 }

@@ -45,6 +45,7 @@ type Bazzite struct {
 	Directories []ContainerDirectory
 	OptFixes    []OptFix
 	Dnf			string
+	Just 		bool
 }
 
 func (m *Bazzite) WithDnf(ctx context.Context, dnf string) *Bazzite {
