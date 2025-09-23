@@ -4,6 +4,14 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "**/README.md"
+      - "build-bazzite.yml"
+      - "bazzite.go"
+      - "build-cayo.yml"
+      - "cayo.go"
+      - "build-fedora.yml"
+      - "fedora.go"
   schedule:
     - cron: "05 10 * * *" # 10:05am UTC everyday
   push:
@@ -15,6 +23,8 @@ on:
       - "bazzite.go"
       - "build-cayo.yml"
       - "cayo.go"
+      - "build-fedora.yml"
+      - "fedora.go"
   workflow_dispatch:
 
 env:
