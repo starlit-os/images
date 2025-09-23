@@ -34,7 +34,7 @@ env:
   IMAGE_NAME: "fedora"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
-  SOURCE_IMAGE: "quay.io/fedora/fedora-bootc:42"
+  SOURCE_IMAGE: "quay.io/fedora/fedora-bootc:43"
   SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/cosign.pub"
 
 concurrency:

@@ -13,5 +13,11 @@ func (m *Bazzite) FedoraContainer(
 	source_image string,
 ) *Bazzite {
 	return m.From(ctx, source_image).
-		WithJust(ctx, false)
+		WithJust(ctx, false).
+		WithPackages(ctx, []string{
+			"gnome-control-center",
+			"gnome-session",
+			"gnome-shell",
+			"nautilus",
+		}).
 }
