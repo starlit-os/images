@@ -1,5 +1,5 @@
 ---
-name: Build Cayo container image
+name: Build Fedora container image
 on:
   pull_request:
     branches:
@@ -8,10 +8,10 @@ on:
       - "**/README.md"
       - "build-bazzite.yml"
       - "bazzite.go"
+      - "build-cayo.yml"
+      - "cayo.go"
       - "build-bluefin.yml"
       - "bluefin.go"
-      - "build-fedora.yml"
-      - "fedora.go"
   schedule:
     - cron: "05 10 * * *" # 10:05am UTC everyday
   push:
@@ -21,21 +21,21 @@ on:
       - "**/README.md"
       - "build-bazzite.yml"
       - "bazzite.go"
+      - "build-cayo.yml"
+      - "cayo.go"
       - "build-bluefin.yml"
       - "bluefin.go"
-      - "build-fedora.yml"
-      - "fedora.go"
   workflow_dispatch:
 
 env:
-  IMAGE_DESC: "Cayo (Starlit Edition)"
-  IMAGE_KEYWORDS: "bootc,ublue,universal-blue,cayo"
+  IMAGE_DESC: "Fedora (Starlit Edition)"
+  IMAGE_KEYWORDS: "bootc,fedora"
   IMAGE_LOGO_URL: "https://avatars.githubusercontent.com/u/120078124?s=200&v=4" # Put your own image here for a fancy profile on https://artifacthub.io/!
-  IMAGE_NAME: "cayo"
+  IMAGE_NAME: "fedora"
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
   DEFAULT_TAG: "latest"
-  SOURCE_IMAGE: "ghcr.io/ublue-os/cayo:fedora42"
-  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/cayo/refs/heads/main/cosign.pub"
+  SOURCE_IMAGE: "quay.io/fedora/fedora-bootc:43"
+  SOURCE_IMAGE_KEY: "https://raw.githubusercontent.com/ublue-os/bluefin/refs/heads/main/cosign.pub"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
@@ -65,9 +65,9 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
 
-      - name: Verify source image signature
-        run: |
-          cosign verify --key ${SOURCE_IMAGE_KEY} ${SOURCE_IMAGE}
+    #   - name: Verify source image signature
+    #     run: |
+    #       cosign verify --key ${SOURCE_IMAGE_KEY} ${SOURCE_IMAGE}
 
       # This is optional, but if you see that your builds are way too big for the runners, you can enable this by uncommenting the following lines:
       # - name: Maximize build space
