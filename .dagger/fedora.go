@@ -15,9 +15,23 @@ func (m *Bazzite) FedoraContainer(
 	return m.From(ctx, source_image).
 		WithJust(ctx, false).
 		WithPackages(ctx, []string{
+			"fwupd",
+			"gdm",
+			"gnome-bluetooth",
+			"gnome-color-manager",
 			"gnome-control-center",
-			"gnome-session",
+			"gnome-disk-utility",
+			"gnome-session-wayland-session"
+			"gnome-settings-daemon",
 			"gnome-shell",
 			"nautilus",
+			"plymouth",
+			"plymouth-system-theme",
+			"systemd-{resolved,container,oomd}",
+			"tuned-ppd",
+			"wireguard-tools",
+			"wl-clipboard",
+			"xdg-desktop-portal-gnome",
+			"xdg-user-dirs-gtk",
 		})
 }
