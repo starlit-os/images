@@ -19,5 +19,5 @@ func (m *Bazzite) FedoraContainer(
 			"gnome-session",
 			"gnome-shell",
 			"nautilus",
-		}).
+		})
 }
