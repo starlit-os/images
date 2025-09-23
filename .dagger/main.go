@@ -124,8 +124,10 @@ func (m *Bazzite) Build(
 	}
 
 	// Install packages
-	container = container.
-		WithExec(append([]string{m.Dnf, "-y", "install"}, m.Packages...))
+	if len(m.Packages) > 0 {
+		container = container.
+			WithExec(append([]string{m.Dnf, "-y", "install"}, m.Packages...))
+	}
 
 	// Disable repositories
 	for _, repo := range m.Repos {
@@ -146,8 +148,12 @@ func (m *Bazzite) Build(
 			WithExec([]string{"ln", "-s", "/opt/" + opt.Directory + "/" + opt.BinaryTarget, "/usr/bin/" + opt.Binary})
 	}
 
+	if len(m.Services) > 0 {
+		container = container.
+			WithExec(append([]string{"systemctl", "enable"}, m.Services...))
+	}
+
 	container = container.
-		WithExec(append([]string{"systemctl", "enable"}, m.Services...)).
 		WithExec([]string{"ostree", "container", "commit"})
 
 	// Unmount caches
