@@ -54,7 +54,7 @@ func (m *Bazzite) WithDnf(ctx context.Context, dnf string) *Bazzite {
 }
 
 func (m *Bazzite) WithJust(ctx context.Context, just bool) *Bazzite {
-	m.ust = just
+	m.Just = just
 	return m
 }
 
