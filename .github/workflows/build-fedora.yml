@@ -1,5 +1,5 @@
 ---
-name: Build Bluefin container image
+name: Build Fedora container image
 on:
   pull_request:
     branches:
