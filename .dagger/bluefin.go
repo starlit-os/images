@@ -16,11 +16,13 @@ func (m *Bazzite) BluefinContainer(
 		WithRpmfusion(ctx).
 		WithTerra(ctx).
 		WithReposEnabled(ctx, []string{"warpdotdev"}).
+	    WithCopr(ctx, "scottames/ghostty").
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithDirectory(ctx, "system_files/desktop", "/").
 		WithPackages(ctx, []string{
 			"coolercontrol",
 			"discord",
+			"ghostty",
 			"headsetcontrol",
 			"liquidctl",
 			"lutris",
