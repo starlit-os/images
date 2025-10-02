@@ -19,6 +19,7 @@ func (m *Bazzite) BazziteContainer(
 		WithReposEnabled(ctx, []string{"warpdotdev"}).
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithDirectory(ctx, "system_files/desktop", "/").
+		WithDirectory(ctx, "system_files/bazzite", "/").
 		WithCopr(ctx, "scottames/ghostty").
 		WithCopr(ctx, "che/nerd-fonts").
 		WithPackages(ctx, []string{
