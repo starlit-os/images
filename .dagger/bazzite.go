@@ -15,6 +15,7 @@ func (m *Bazzite) BazziteContainer(
 	return m.From(ctx, source_image).
 		WithRpmfusion(ctx).
 		WithTerra(ctx).
+		WithReposEnabled(ctx, []string{"docker-ce-stable"}).
 		WithReposEnabled(ctx, []string{"warpdotdev"}).
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithDirectory(ctx, "system_files/desktop", "/").
@@ -28,13 +29,19 @@ func (m *Bazzite) BazziteContainer(
 			"liquidctl",
 			"nerd-fonts",
 			"openrgb",
-			"podman-docker",
+			"docker-ce",
+			"docker-ce-cli",
+			"docker-compose-plugin",
+			"docker-model-plugin",
 			"warp-terminal",
 		}).
 		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
 		WithServices(ctx, []string{
+			"docker.service",
+			"docker.socket",
 			"podman.socket",
 			"podman-restart.service",
 			"podman-auto-update.timer",
+			"tailscaled.service",
 		})
 }
