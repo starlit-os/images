@@ -20,12 +20,11 @@ func (m *Bazzite) BazziteContainer(
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithDirectory(ctx, "system_files/desktop", "/").
 		WithDirectory(ctx, "system_files/bazzite", "/").
-		WithCopr(ctx, "scottames/ghostty").
 		WithCopr(ctx, "che/nerd-fonts").
+		WithCopr(ctx, "gvalkov/vicinae").
 		WithPackages(ctx, []string{
 			"coolercontrol",
 			"discord",
-			"ghostty",
 			"headsetcontrol",
 			"liquidctl",
 			"nerd-fonts",
@@ -34,6 +33,7 @@ func (m *Bazzite) BazziteContainer(
 			"docker-ce-cli",
 			"docker-compose-plugin",
 			"docker-model-plugin",
+			"vicinae",
 			"warp-terminal",
 		}).
 		WithOptFix(ctx, "warpdotdev", "warp-terminal", "warp-terminal/warp").
