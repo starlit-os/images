@@ -114,6 +114,10 @@ jobs:
         with:
           version: "latest"
           cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+          cmds: |
+            project init
+            project update
+            do --cache-from type=gha --cache-to type=gha action
 
       - name: Build Image
         run: |
