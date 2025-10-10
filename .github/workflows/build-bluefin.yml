@@ -114,10 +114,8 @@ jobs:
         with:
           version: "latest"
           cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
-          cmds: |
-            project init
-            project update
-            do --cache-from type=gha --cache-to type=gha action
+        env:
+          _EXPERIMENTAL_DAGGER_CACHE_CONFIG: type=gha
 
       - name: Build Image
         run: |
@@ -126,6 +124,7 @@ jobs:
         shell: dagger {0}
         env:
           DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+          _EXPERIMENTAL_DAGGER_CACHE_CONFIG: type=gha
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
