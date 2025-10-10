@@ -21,11 +21,11 @@ func (m *Bazzite) BluefinContainer(
 		WithDirectory(ctx, "system_files/desktop", "/").
 		WithPackages(ctx, []string{
 			"coolercontrol",
-			"discord",
 			"headsetcontrol",
 			"liquidctl",
 			"lutris",
 			"openrgb",
+			"https://vencord.dev/download/vesktop/amd64/rpm",
 			"vicinae",
 			"warp-terminal",
 		}).
