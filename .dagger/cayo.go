@@ -14,13 +14,20 @@ func (m *Bazzite) CayoContainer(
 ) *Bazzite {
 	return m.From(ctx, source_image).
 		WithDnf(ctx, "dnf").
+		WithReposEnabled(ctx, []string{"docker-ce-stable"}).
+		WithDirectory(ctx, "system_files/bazzite", "/").
 		WithCopr(ctx, "ublue-os/packages").
 		WithDirectory(ctx, "system_files/shared", "/").
 		WithPackages(ctx, []string{
-			"podman-docker",
+			"docker-ce",
+			"docker-ce-cli",
+			"docker-compose-plugin",
+			"docker-model-plugin",
 			"ublue-os-luks",
 		}).
 		WithServices(ctx, []string{
+			"docker.service",
+			"docker.socket",
 			"podman.socket",
 			"podman-restart.service",
 			"podman-auto-update.timer",
